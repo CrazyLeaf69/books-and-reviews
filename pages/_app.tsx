@@ -17,7 +17,7 @@ export function ToggleColorMode() {
   return (
     <>
       {theme.palette.mode} mode
-      <IconButton sx={{ ml: 1 }} onClick={colorMode.toggleColorMode} color="inherit">
+      <IconButton sx={{ ml: 0 }} onClick={colorMode.toggleColorMode} color="inherit">
         {theme.palette.mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
       </IconButton>
     </>

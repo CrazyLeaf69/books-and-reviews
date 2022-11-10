@@ -1,7 +1,6 @@
 import React from "react";
-import { Button, Card, Box, CardActions, CardContent, Typography } from "@mui/material";
+import { Card, Box, CardContent, Typography } from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
 
 type item = {
   id: string;
@@ -32,12 +31,13 @@ const BookInfoCard = ({ id, volumeInfo }: item) => {
         <CardContent className="flex flex-col gap-1">
           <Image
             src={
-              volumeInfo.imageLinks.large ||
-              volumeInfo.imageLinks.medium ||
-              volumeInfo.imageLinks.extraLarge ||
-              volumeInfo.imageLinks.small ||
-              volumeInfo.imageLinks.smallThumbnail ||
-              volumeInfo.imageLinks.thumbnail
+              volumeInfo.imageLinks?.large ||
+              volumeInfo.imageLinks?.medium ||
+              volumeInfo.imageLinks?.extraLarge ||
+              volumeInfo.imageLinks?.small ||
+              volumeInfo.imageLinks?.smallThumbnail ||
+              volumeInfo.imageLinks?.thumbnail ||
+              ""
             }
             width={275}
             height={200}
@@ -50,22 +50,24 @@ const BookInfoCard = ({ id, volumeInfo }: item) => {
           <Typography variant="body2">
             {volumeInfo.authors && volumeInfo.authors.join(", ")} - {volumeInfo.publishedDate}
           </Typography>
-          <Typography variant="body1">{volumeInfo.description.replace(/<\/?[^>]+(>|$)/g, "")}</Typography>
+          <Typography variant="body1">
+            {volumeInfo.description?.replace(/<\/?[^>]+(>|$)/g, "") || "no description"}
+          </Typography>
           <Typography variant="body2">
             <span className="font-bold">Categories: </span>
             {volumeInfo.categories ? volumeInfo.categories[0] : "none"}
           </Typography>
           <Typography variant="body2">
             <span className="font-bold">Language: </span>
-            {volumeInfo.language}
+            {volumeInfo?.language}
           </Typography>
           <Typography variant="body2">
             <span className="font-bold">Pages: </span>
-            {volumeInfo.pageCount}
+            {volumeInfo?.pageCount}
           </Typography>
           <Typography variant="body2">
             <span className="font-bold">Publisher: </span>
-            {volumeInfo.publisher}
+            {volumeInfo?.publisher}
           </Typography>
         </CardContent>
       </Card>

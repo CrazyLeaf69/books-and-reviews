@@ -20,6 +20,9 @@ main {
     overflow-x: hidden;
     overflow-y: hidden;
 }
+/* .scroll {
+    overflow-y: none !important;
+} */
 
 .test {
     display: grid;

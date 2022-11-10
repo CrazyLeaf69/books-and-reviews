@@ -14,11 +14,12 @@ import {
   TableSortLabel,
   TextField,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { visuallyHidden } from "@mui/utils";
 import moment from "moment";
+import NoReviews from "./NoReviews";
 
 interface props {
   reviews: reviews;
@@ -77,7 +78,7 @@ const headCells: readonly HeadCell[] = [
     id: "grade",
     numeric: true,
     disablePadding: false,
-    label: "Grade",
+    label: "Rating",
   },
   {
     id: "added",
@@ -110,18 +111,18 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
+            <Tooltip
+              title={orderBy === headCell.id ? (order === "desc" ? "sorted descending" : "sorted ascending") : ""}
+              placement="top"
             >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : "asc"}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+              </TableSortLabel>
+            </Tooltip>
           </TableCell>
         ))}
       </TableRow>
@@ -168,7 +169,7 @@ const AddReviewForm = ({ id, setRows }: { id: string; setRows: React.Dispatch<Re
 
   return (
     <div>
-      <Typography sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }} variant="body1" component="div">
+      <Typography sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 }, mb: 1 }} variant="body1" component="div">
         Add Review:
       </Typography>
       <form onSubmit={(e) => handleSubmit(e)} className="pl-4 flex flex-row items-start gap-2">
@@ -218,7 +219,7 @@ const BookReviews = ({ reviews, bookId }: props) => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Paper sx={{ width: "100%", mb: 2, boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" }}>
         <EnhancedTableToolbar />
         <AddReviewForm id={bookId} setRows={setRows} />
         <TableContainer>
@@ -230,27 +231,31 @@ const BookReviews = ({ reviews, bookId }: props) => {
               rowCount={rows.length}
             />
             <TableBody>
-              {rows
-                .sort(getComparator(order, orderBy))
-                .slice()
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {rows.length > 0 ? (
+                rows
+                  .sort(getComparator(order, orderBy))
+                  .slice()
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow key={index} hover role="checkbox" tabIndex={-1}>
-                      <TableCell component="th" id={labelId} scope="row" padding="normal" align="left">
-                        {row.comment}
-                      </TableCell>
-                      <TableCell align="right" className="w-[150px]">
-                        <Rating name="read-only" value={row.grade} precision={0.5} readOnly />
-                      </TableCell>
-                      <TableCell align="right" id={labelId} padding="normal" className="w-[150px]">
-                        {row.added != "Just Now" ? moment.utc(row.added).local().format("YY-DD-MM hh:mm") : row.added}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                    return (
+                      <TableRow key={index} hover role="checkbox" tabIndex={-1}>
+                        <TableCell component="th" id={labelId} scope="row" padding="normal" align="left">
+                          {row.comment}
+                        </TableCell>
+                        <TableCell align="right" className="w-[150px]">
+                          <Rating name="read-only" value={row.grade} precision={0.5} readOnly />
+                        </TableCell>
+                        <TableCell align="right" id={labelId} padding="normal" className="w-[150px]">
+                          {row.added != "Just Now" ? moment.utc(row.added).local().format("YY-DD-MM hh:mm") : row.added}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+              ) : (
+                <NoReviews />
+              )}
               {emptyRows > 0 && (
                 <TableRow
                   style={{

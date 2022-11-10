@@ -1,5 +1,6 @@
 import { Box, Button, Input } from "@mui/material";
-import React, { Suspense, useState } from "react";
+import { useRouter } from "next/router";
+import React, { Suspense, useEffect, useState } from "react";
 import BookCard from "../components/BookCard";
 
 type items = {
@@ -20,23 +21,35 @@ type SearchResults = {
 const Books = () => {
   const [searchResults, setSearchResults] = useState<SearchResults>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
+  // const [searchParams, setSearchParams] = useSearchParams();
 
   const onSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
     const search = e.currentTarget.search.value;
-
+    Search(search);
+  };
+  const Search = async (search: string) => {
+    setIsLoading(true);
     const res = await fetch(
       `https://www.googleapis.com/books/v1/volumes?q=${search}&key=${process.env.NEXT_PUBLIC_KEY}`
     );
     const data = await res.json();
-    console.log(data);
 
     setSearchResults(data as SearchResults);
     setIsLoading(false);
+    router.push("/books?q=" + search);
   };
+  useEffect(() => {
+    const q = router.query.q || router.asPath.split("q=")[1];
+    if (q) {
+      // @ts-ignore
+      Search(q);
+    }
+  }, []);
+
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center scroll pt-2">
       <form onSubmit={(e) => onSearch(e)} className="mb-2">
         <Input type="text" name="search" placeholder="Search" />
         <Button type="submit">search</Button>
