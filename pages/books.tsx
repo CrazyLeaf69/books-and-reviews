@@ -17,7 +17,7 @@ type SearchResults = {
   totalItems: number;
 };
 
-const books = () => {
+const Books = () => {
   const [searchResults, setSearchResults] = useState<SearchResults>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -66,4 +66,4 @@ const books = () => {
   );
 };
 
-export default books;
+export default Books;
